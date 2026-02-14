@@ -128,6 +128,29 @@ For tagged releases (e.g. `v0.1.0`):
 
 SHA tags are also published with the same suffix pattern.
 
+## Release workflow
+
+This repo supports two release triggers:
+
+1. PR comment trigger:
+   - Comment on a PR: `!release patch`
+   - or `!release minor`
+   - or `!release major`
+
+2. Manual trigger:
+   - Actions -> `release` workflow -> Run workflow
+   - choose bump type: `patch|minor|major`
+
+Release behavior:
+
+- computes next semantic version tag: `vX.Y.Z`
+- creates and pushes the git tag
+- builds and publishes GHCR images (amd64):
+  - `${version}-core|ethereum|solana|full`
+  - `${version}` (alias of full)
+  - `latest-*` and `latest` (full alias)
+- creates GitHub Release with generated changelog
+
 ## Deploy
 
 Use `docker-compose.yml` for Phala Cloud custom compose deployment.
