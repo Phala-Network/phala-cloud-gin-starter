@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/Dstack-TEE/dstack/sdk/go v0.0.0-20260214040735-facaaed9b49e
-	github.com/Phala-Network/dcap-qvl/golang-bindings v0.0.0-20260214070153-c2e89db2fbf9 // TODO: pin to tagged release once https://github.com/Phala-Network/dcap-qvl/pull/113 is merged
+	github.com/Phala-Network/dcap-qvl/golang-bindings v0.0.0-20260214152318-b0d898a6b7fc // TODO: pin to tagged release once https://github.com/Phala-Network/dcap-qvl/pull/113 is merged
 	github.com/gin-gonic/gin v1.11.0
 )
 
