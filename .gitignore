@@ -1,0 +1,10 @@
+# binaries
+phala-cloud-gin-starter
+*.exe
+*.out
+
+# env files
+.env
+
+# macOS
+.DS_Store
