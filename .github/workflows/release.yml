@@ -98,12 +98,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
+          ref: ${{ needs.prepare.outputs.target_sha }}
           fetch-depth: 0
 
-      - name: resolve target
-        run: |
-          git fetch --tags --force
-          git checkout --detach "${{ needs.prepare.outputs.target_sha }}"
+      - name: fetch tags
+        run: git fetch --tags --force
 
       - name: compute next version
         id: version
