@@ -45,9 +45,13 @@ func setCachedCollateral(key string, coll *dcap.QuoteCollateralV3) {
 	})
 }
 
+// maxQuoteRequestSize limits the request body to 10 MiB to prevent DoS via unbounded reads.
+const maxQuoteRequestSize = 10 << 20 // 10 MiB
+
 // readQuoteFromRequest extracts raw quote bytes from the request.
 // Supports: multipart file upload (field "file"), application/octet-stream body, JSON hex {"hex":"..."}
 func readQuoteFromRequest(c *gin.Context) ([]byte, error) {
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxQuoteRequestSize)
 	ct := c.ContentType()
 
 	// multipart file upload
