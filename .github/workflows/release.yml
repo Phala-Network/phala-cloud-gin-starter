@@ -185,22 +185,23 @@ jobs:
         id: cache-dcap
         uses: actions/cache@v4
         with:
-          path: dcap-qvl/target
-          key: dcap-lib-${{ env.DCAP_QVL_COMMIT }}
+          path: dcap-qvl/target/x86_64-unknown-linux-musl
+          key: dcap-lib-musl-${{ env.DCAP_QVL_COMMIT }}
 
-      - name: Build libdcap_qvl.a
+      - name: Build libdcap_qvl.a (musl target for Alpine)
         if: steps.cache-dcap.outputs.cache-hit != 'true'
         run: |
+          sudo apt-get update && sudo apt-get install -y musl-tools
           git clone https://github.com/Phala-Network/dcap-qvl.git dcap-qvl
           cd dcap-qvl && git checkout "$DCAP_QVL_COMMIT"
-          rustup target add x86_64-unknown-linux-gnu
-          cargo build --release --features go
+          rustup target add x86_64-unknown-linux-musl
+          cargo build --release --features go --target x86_64-unknown-linux-musl
 
       - name: Upload library artifact
         uses: actions/upload-artifact@v4
         with:
           name: libdcap_qvl
-          path: dcap-qvl/target/release/libdcap_qvl.a
+          path: dcap-qvl/target/x86_64-unknown-linux-musl/release/libdcap_qvl.a
           retention-days: 1
 
   build-and-push:
@@ -210,6 +211,7 @@ jobs:
       contents: read
       packages: write
     strategy:
+      fail-fast: false
       matrix:
         profile:
           - name: core
