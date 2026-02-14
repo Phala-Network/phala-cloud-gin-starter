@@ -50,8 +50,8 @@ jobs:
 
             if (eventName === 'workflow_dispatch') {
               shouldRelease = true
-              bump = core.getInput('bump')
-              targetSha = core.getInput('ref') || context.ref.replace('refs/heads/', '')
+              bump = (context.payload.inputs?.bump || '').toLowerCase()
+              targetSha = context.payload.inputs?.ref || context.ref.replace('refs/heads/', '')
             }
 
             if (eventName === 'issue_comment') {
