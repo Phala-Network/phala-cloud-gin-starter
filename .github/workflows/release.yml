@@ -69,6 +69,7 @@ jobs:
             docker pull ghcr.io/${{ steps.repo_name.outputs.REPO_NAME }}:${{ steps.get_version.outputs.VERSION }}-ethereum
             docker pull ghcr.io/${{ steps.repo_name.outputs.REPO_NAME }}:${{ steps.get_version.outputs.VERSION }}-solana
             docker pull ghcr.io/${{ steps.repo_name.outputs.REPO_NAME }}:${{ steps.get_version.outputs.VERSION }}-full
+            docker pull ghcr.io/${{ steps.repo_name.outputs.REPO_NAME }}:${{ steps.get_version.outputs.VERSION }}
             ```
 
             Or latest tags:
@@ -77,6 +78,7 @@ jobs:
             docker pull ghcr.io/${{ steps.repo_name.outputs.REPO_NAME }}:latest-ethereum
             docker pull ghcr.io/${{ steps.repo_name.outputs.REPO_NAME }}:latest-solana
             docker pull ghcr.io/${{ steps.repo_name.outputs.REPO_NAME }}:latest-full
+            docker pull ghcr.io/${{ steps.repo_name.outputs.REPO_NAME }}:latest
             ```
 
             ## What's Changed

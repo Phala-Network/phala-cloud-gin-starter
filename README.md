@@ -116,6 +116,7 @@ Workflow publishes profile-suffixed tags:
 - `latest-ethereum`
 - `latest-solana`
 - `latest-full`
+- `latest` (alias of full)
 
 For tagged releases (e.g. `v0.1.0`):
 
@@ -123,6 +124,7 @@ For tagged releases (e.g. `v0.1.0`):
 - `v0.1.0-ethereum`
 - `v0.1.0-solana`
 - `v0.1.0-full`
+- `v0.1.0` (alias of full)
 
 SHA tags are also published with the same suffix pattern.
 

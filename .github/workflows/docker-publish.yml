@@ -50,8 +50,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
-        id: meta
+      - name: Extract metadata (non-full profiles)
+        if: matrix.profile.name != 'full'
+        id: meta_non_full
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
@@ -62,7 +63,23 @@ jobs:
             type=sha,suffix=-${{ matrix.profile.name }}
             type=raw,value=latest-${{ matrix.profile.name }},enable={{is_default_branch}}
 
-      - name: Build and push Docker image
+      - name: Extract metadata (full profile + default aliases)
+        if: matrix.profile.name == 'full'
+        id: meta_full
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch,suffix=-full
+            type=ref,event=pr,suffix=-full
+            type=semver,pattern={{version}},suffix=-full
+            type=sha,suffix=-full
+            type=raw,value=latest-full,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image (non-full profiles)
+        if: matrix.profile.name != 'full'
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -70,7 +87,21 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           build-args: |
             GO_BUILD_TAGS=${{ matrix.profile.tags }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta_non_full.outputs.tags }}
+          labels: ${{ steps.meta_non_full.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Docker image (full profile)
+        if: matrix.profile.name == 'full'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' }}
+          build-args: |
+            GO_BUILD_TAGS=${{ matrix.profile.tags }}
+          tags: ${{ steps.meta_full.outputs.tags }}
+          labels: ${{ steps.meta_full.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
