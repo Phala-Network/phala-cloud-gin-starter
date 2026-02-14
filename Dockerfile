@@ -17,5 +17,5 @@ WORKDIR /app
 RUN adduser -D -u 10001 appuser
 COPY --from=builder /app/server /app/server
 USER appuser
-EXPOSE 3000
+EXPOSE 8080
 ENTRYPOINT ["/app/server"]

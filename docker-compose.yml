@@ -3,14 +3,14 @@ services:
     image: ghcr.io/phala-network/phala-cloud-gin-starter:latest-core
     restart: unless-stopped
     ports:
-      - "80:3000"
+      - "80:8080"
     volumes:
       - /var/run/tappd.sock:/var/run/tappd.sock
       - /var/run/dstack.sock:/var/run/dstack.sock
     environment:
       - FAILURE_THRESHOLD=10
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/healthz >/dev/null 2>&1 || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/healthz >/dev/null 2>&1 || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 3

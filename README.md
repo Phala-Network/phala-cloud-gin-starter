@@ -73,7 +73,7 @@ go mod tidy
 go run .
 ```
 
-Default port is `:3000`.
+Default port is `:8080`.
 
 Use simulator sockets:
 
@@ -107,6 +107,24 @@ Both:
 ```bash
 docker build --build-arg GO_BUILD_TAGS="ethereum solana" -t phala-cloud-gin-starter:full .
 ```
+
+## Image tags (GHCR)
+
+Workflow publishes profile-suffixed tags:
+
+- `latest-core`
+- `latest-ethereum`
+- `latest-solana`
+- `latest-full`
+
+For tagged releases (e.g. `v0.1.0`):
+
+- `v0.1.0-core`
+- `v0.1.0-ethereum`
+- `v0.1.0-solana`
+- `v0.1.0-full`
+
+SHA tags are also published with the same suffix pattern.
 
 ## Deploy
 
