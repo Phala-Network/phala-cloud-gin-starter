@@ -85,6 +85,7 @@ func main() {
 
 	registerEthereumRoutes(r)
 	registerSolanaRoutes(r)
+	registerDcapRoutes(r)
 
 	r.GET("/env", func(c *gin.Context) {
 		recordSuccess()
