@@ -24,6 +24,7 @@ RUN if echo " $GO_BUILD_TAGS " | grep -q " dcap "; then \
 
 FROM alpine:3.21
 WORKDIR /app
+RUN apk add --no-cache libgcc
 RUN adduser -D -u 10001 appuser
 COPY --from=builder /app/server /app/server
 USER appuser
