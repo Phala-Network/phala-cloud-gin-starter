@@ -14,8 +14,8 @@ COPY . .
 # When building with ethereum tag, add optional dependency explicitly.
 RUN if echo " $GO_BUILD_TAGS " | grep -q " ethereum "; then go get github.com/ethereum/go-ethereum@v1.16.8; fi
 
-# Build: use CGO when dcap tag is present (expects libdcap_qvl.a in lib/), otherwise static build.
-RUN if echo " $GO_BUILD_TAGS " | grep -q " dcap "; then \
+# Build: use CGO when dcap or ratls tag is present (expects libdcap_qvl.a in lib/), otherwise static build.
+RUN if echo " $GO_BUILD_TAGS " | grep -qE " (dcap|ratls) "; then \
       CGO_ENABLED=1 CGO_LDFLAGS="-L/app/lib" GOOS=linux GOARCH=amd64 \
         go build -tags "$GO_BUILD_TAGS" -o server . ; \
     else \

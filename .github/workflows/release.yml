@@ -25,7 +25,7 @@ env:
   # TODO: once https://github.com/Phala-Network/dcap-qvl/pull/113 is merged and a
   # release is published with libdcap_qvl_linux_amd64.a assets, replace the
   # build-dcap-lib job with a simple download from GitHub Releases.
-  DCAP_QVL_COMMIT: "b0d898a6b7fc840187f3a3810baa2c4119397548"
+  DCAP_QVL_COMMIT: "a30e3064ba356248807f5f5236410e810038bb76"
 
 jobs:
   prepare:
