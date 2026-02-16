@@ -69,8 +69,11 @@ jobs:
           - name: dcap
             tags: "dcap"
             needs_dcap: true
+          - name: ratls
+            tags: "ratls"
+            needs_dcap: true
           - name: full
-            tags: "ethereum solana dcap"
+            tags: "ethereum solana dcap ratls"
             needs_dcap: true
 
     steps:

@@ -225,8 +225,11 @@ jobs:
           - name: dcap
             tags: "dcap"
             needs_dcap: true
+          - name: ratls
+            tags: "ratls"
+            needs_dcap: true
           - name: full
-            tags: "ethereum solana dcap"
+            tags: "ethereum solana dcap ratls"
             needs_dcap: true
     steps:
       - name: checkout release tag
@@ -303,6 +306,7 @@ jobs:
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}-ethereum
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}-solana
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}-dcap
+            docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}-ratls
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}-full
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}
             ```
@@ -314,6 +318,7 @@ jobs:
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-ethereum
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-solana
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-dcap
+            docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-ratls
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-full
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest
             ```
