@@ -4,6 +4,8 @@ go 1.24.0
 
 require (
 	github.com/Dstack-TEE/dstack/sdk/go v0.0.0-20260214040735-facaaed9b49e
+	github.com/Dstack-TEE/dstack/sdk/go/ratls v0.0.0-20260216134022-52f53c3ee21f
+	github.com/Phala-Network/dcap-qvl/golang-bindings v0.0.0-20260216131423-a30e3064ba35
 	github.com/gin-gonic/gin v1.11.0
 )
 

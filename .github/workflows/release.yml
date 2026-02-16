@@ -22,6 +22,10 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  # TODO: once https://github.com/Phala-Network/dcap-qvl/pull/113 is merged and a
+  # release is published with libdcap_qvl_linux_amd64.a assets, replace the
+  # build-dcap-lib job with a simple download from GitHub Releases.
+  DCAP_QVL_COMMIT: "a30e3064ba356248807f5f5236410e810038bb76"
 
 jobs:
   prepare:
@@ -94,12 +98,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
+          ref: ${{ needs.prepare.outputs.target_sha }}
           fetch-depth: 0
 
-      - name: resolve target
-        run: |
-          git fetch --tags --force
-          git checkout --detach "${{ needs.prepare.outputs.target_sha }}"
+      - name: fetch tags
+        run: git fetch --tags --force
 
       - name: compute next version
         id: version
@@ -173,28 +176,73 @@ jobs:
           git tag -a "$version" -m "release $version"
           git push origin "$version"
 
-  build-and-push:
+  build-dcap-lib:
     needs: create-tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache Cargo build
+        id: cache-dcap
+        uses: actions/cache@v4
+        with:
+          path: dcap-qvl/target/x86_64-unknown-linux-musl
+          key: dcap-lib-musl-${{ env.DCAP_QVL_COMMIT }}
+
+      - name: Build libdcap_qvl.a (musl target for Alpine)
+        if: steps.cache-dcap.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update && sudo apt-get install -y musl-tools
+          git clone https://github.com/Phala-Network/dcap-qvl.git dcap-qvl
+          cd dcap-qvl && git checkout "$DCAP_QVL_COMMIT"
+          rustup target add x86_64-unknown-linux-musl
+          cargo build --release --features go --target x86_64-unknown-linux-musl
+
+      - name: Upload library artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libdcap_qvl
+          path: dcap-qvl/target/x86_64-unknown-linux-musl/release/libdcap_qvl.a
+          retention-days: 1
+
+  build-and-push:
+    needs: [create-tag, build-dcap-lib]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     strategy:
+      fail-fast: false
       matrix:
         profile:
           - name: core
             tags: ""
+            needs_dcap: false
           - name: ethereum
             tags: "ethereum"
+            needs_dcap: false
           - name: solana
             tags: "solana"
+            needs_dcap: false
+          - name: dcap
+            tags: "dcap"
+            needs_dcap: true
+          - name: ratls
+            tags: "ratls"
+            needs_dcap: true
           - name: full
-            tags: "ethereum solana"
+            tags: "ethereum solana dcap ratls"
+            needs_dcap: true
     steps:
       - name: checkout release tag
         uses: actions/checkout@v4
         with:
           ref: refs/tags/${{ needs.create-tag.outputs.version }}
+
+      - name: Download dcap library
+        if: matrix.profile.needs_dcap
+        uses: actions/download-artifact@v4
+        with:
+          name: libdcap_qvl
+          path: lib
 
       - name: set up docker buildx
         uses: docker/setup-buildx-action@v3
@@ -257,6 +305,8 @@ jobs:
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}-core
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}-ethereum
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}-solana
+            docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}-dcap
+            docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}-ratls
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}-full
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:${{ needs.create-tag.outputs.version }}
             ```
@@ -267,6 +317,8 @@ jobs:
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-core
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-ethereum
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-solana
+            docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-dcap
+            docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-ratls
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-full
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest
             ```
