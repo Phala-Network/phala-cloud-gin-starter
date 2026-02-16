@@ -9,6 +9,7 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"fmt"
+	"net"
 	"net/http"
 	"time"
 
@@ -21,15 +22,17 @@ const ratlsDialTimeout = 15 * time.Second
 func registerRatlsRoutes(r *gin.Engine) {
 	g := r.Group("/ratls")
 
-	// GET /ratls/verify?endpoint=host:port[&pccs_url=...]
+	// GET /ratls/verify?endpoint=host[:port][&pccs_url=...]
 	// Connects to the given TLS endpoint, extracts the peer certificate,
 	// and verifies it is a valid RA-TLS certificate with a genuine TDX quote.
+	// Port defaults to 443 if not specified.
 	g.GET("/verify", func(c *gin.Context) {
 		endpoint := c.Query("endpoint")
 		if endpoint == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "missing 'endpoint' query parameter"})
 			return
 		}
+		endpoint = normalizeEndpoint(endpoint)
 
 		pccsURL := c.DefaultQuery("pccs_url", ratls.DefaultPCCSURL)
 
@@ -69,15 +72,17 @@ func registerRatlsRoutes(r *gin.Engine) {
 		c.JSON(http.StatusOK, resp)
 	})
 
-	// GET /ratls/cert?endpoint=host:port
+	// GET /ratls/cert?endpoint=host[:port]
 	// Connects to the TLS endpoint and returns certificate info without
 	// performing RA-TLS verification. Useful for debugging.
+	// Port defaults to 443 if not specified.
 	g.GET("/cert", func(c *gin.Context) {
 		endpoint := c.Query("endpoint")
 		if endpoint == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "missing 'endpoint' query parameter"})
 			return
 		}
+		endpoint = normalizeEndpoint(endpoint)
 
 		cert, err := fetchPeerCert(c.Request.Context(), endpoint)
 		if err != nil {
@@ -97,6 +102,15 @@ func registerRatlsRoutes(r *gin.Engine) {
 			"extensions": describeExtensions(cert),
 		})
 	})
+}
+
+// normalizeEndpoint appends port 443 if no port is specified.
+func normalizeEndpoint(endpoint string) string {
+	_, _, err := net.SplitHostPort(endpoint)
+	if err != nil {
+		return net.JoinHostPort(endpoint, "443")
+	}
+	return endpoint
 }
 
 // fetchPeerCert connects to a TLS endpoint and returns the peer certificate.
