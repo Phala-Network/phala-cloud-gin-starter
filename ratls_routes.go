@@ -106,9 +106,12 @@ func registerRatlsRoutes(r *gin.Engine) {
 
 // normalizeEndpoint appends port 443 if no port is specified.
 func normalizeEndpoint(endpoint string) string {
-	_, _, err := net.SplitHostPort(endpoint)
+	host, port, err := net.SplitHostPort(endpoint)
 	if err != nil {
 		return net.JoinHostPort(endpoint, "443")
+	}
+	if port == "" {
+		return net.JoinHostPort(host, "443")
 	}
 	return endpoint
 }
