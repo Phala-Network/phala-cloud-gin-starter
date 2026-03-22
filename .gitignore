@@ -6,5 +6,8 @@ phala-cloud-gin-starter
 # env files
 .env
 
+# native libraries (placed by CI or local build)
+lib/
+
 # macOS
 .DS_Store
