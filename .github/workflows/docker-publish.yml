@@ -13,10 +13,9 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  # TODO: once https://github.com/Phala-Network/dcap-qvl/pull/113 is merged and a
-  # release is published with libdcap_qvl_linux_amd64.a assets, replace the
-  # build-dcap-lib job with a simple download from GitHub Releases.
-  DCAP_QVL_COMMIT: "c201e5e2b312aa834d576031ab0beffb363e3463"
+  # PR #113 is merged. TODO: once a release is published with libdcap_qvl.a
+  # assets, replace the build-dcap-lib job with a simple download from GitHub Releases.
+  DCAP_QVL_COMMIT: "f1dcc65371e941a7b83e3234833d23a1fb232ab1"
 
 jobs:
   # Build the dcap-qvl native library once, shared by dcap/full profiles.
