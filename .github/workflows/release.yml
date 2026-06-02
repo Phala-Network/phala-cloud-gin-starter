@@ -321,7 +321,7 @@ jobs:
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest-full
             docker pull ghcr.io/${{ needs.prepare.outputs.repo_lower }}:latest
             ```
-          make_latest: false
+          make_latest: true
 
   post-release:
     needs: [prepare, create-tag, create-release]
