@@ -58,7 +58,23 @@ Run:
 go run -tags solana .
 ```
 
-### 4) Both Ethereum + Solana
+### 4) DCAP profile (`-tags dcap`)
+
+Adds routes:
+
+- `POST /dcap/parse` — Parse a raw quote binary
+- `POST /dcap/verify` — Parse, fetch collateral, and verify a quote
+- `POST /dcap/collateral` — Fetch collateral for a quote
+- `POST /dcap/pck` — Extract PCK certificate extension from quote
+- `GET /dcap/device_id` — Get device ID (SHA256 of PPID from verified TDX attestation)
+
+Run:
+
+```bash
+go run -tags dcap .
+```
+
+### 5) Both Ethereum + Solana
 
 ```bash
 go get github.com/ethereum/go-ethereum@v1.16.8
@@ -102,10 +118,16 @@ Solana profile:
 docker build --build-arg GO_BUILD_TAGS=solana -t phala-cloud-gin-starter:solana .
 ```
 
-Both:
+DCAP profile:
 
 ```bash
-docker build --build-arg GO_BUILD_TAGS="ethereum solana" -t phala-cloud-gin-starter:full .
+docker build --build-arg GO_BUILD_TAGS=dcap -t phala-cloud-gin-starter:dcap .
+```
+
+Full (all profiles):
+
+```bash
+docker build --build-arg GO_BUILD_TAGS="ethereum solana dcap" -t phala-cloud-gin-starter:full .
 ```
 
 ## Image tags (GHCR)
