@@ -4,7 +4,7 @@ WORKDIR /app
 ARG GO_BUILD_TAGS=""
 
 # Install build dependencies needed for CGO (dcap profile).
-RUN apk add --no-cache gcc musl-dev
+RUN apk add --no-cache gcc musl-dev git
 
 COPY go.mod go.sum* ./
 RUN go mod download
