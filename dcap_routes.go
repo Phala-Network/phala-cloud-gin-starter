@@ -4,6 +4,8 @@
 package main
 
 import (
+	"context"
+	"crypto/sha256"
 	"encoding/hex"
 	"io"
 	"net/http"
@@ -11,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Dstack-TEE/dstack/sdk/go/dstack"
 	dcap "github.com/Phala-Network/dcap-qvl/golang-bindings"
 	"github.com/gin-gonic/gin"
 )
@@ -180,5 +183,32 @@ func registerDcapRoutes(r *gin.Engine) {
 		}
 
 		c.JSON(http.StatusOK, ext)
+	})
+
+	// GET /dcap/device_id - Get device ID derived from verified TDX attestation
+	g.GET("/device_id", func(c *gin.Context) {
+		client := dstack.NewDstackClient()
+		resp, err := client.GetQuote(context.Background(), []byte("device_id"))
+		if err != nil {
+			recordFailure("device_id", err)
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "failed to get quote: " + err.Error()})
+			return
+		}
+
+		rawQuote, err := resp.DecodeQuote()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to decode quote: " + err.Error()})
+			return
+		}
+
+		report, err := dcap.GetCollateralAndVerify(rawQuote, dcap.PhalaPCCSURL)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to verify quote: " + err.Error()})
+			return
+		}
+
+		hash := sha256.Sum256(report.PPID)
+		recordSuccess()
+		c.JSON(http.StatusOK, gin.H{"device_id": hex.EncodeToString(hash[:])})
 	})
 }
