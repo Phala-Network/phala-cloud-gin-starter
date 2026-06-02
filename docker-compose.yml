@@ -1,5 +1,5 @@
 services:
-  app:
+  gin:
     image: ghcr.io/phala-network/phala-cloud-gin-starter:v0.1.6-full
     restart: unless-stopped
     ports:

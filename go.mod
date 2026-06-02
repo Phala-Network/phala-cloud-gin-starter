@@ -3,9 +3,9 @@ module github.com/Phala-Network/phala-cloud-gin-starter
 go 1.24.0
 
 require (
-	github.com/Dstack-TEE/dstack/sdk/go v0.0.0-20260214040735-facaaed9b49e
-	github.com/Dstack-TEE/dstack/sdk/go/ratls v0.0.0-20260321044838-f87c97728ad2
-	github.com/Phala-Network/dcap-qvl/golang-bindings v0.0.0-20260309042212-f1dcc65371e9
+	github.com/Dstack-TEE/dstack/sdk/go v0.1.0
+	github.com/Dstack-TEE/dstack/sdk/go/ratls v0.1.0
+	github.com/Phala-Network/dcap-qvl/golang-bindings v0.1.0
 	github.com/gin-gonic/gin v1.11.0
 )
 
@@ -41,7 +41,7 @@ require (
 	golang.org/x/mod v0.29.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/sync v0.18.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	golang.org/x/tools v0.38.0 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
