@@ -209,6 +209,9 @@ func registerDcapRoutes(r *gin.Engine) {
 
 		hash := sha256.Sum256(report.PPID)
 		recordSuccess()
-		c.JSON(http.StatusOK, gin.H{"device_id": hex.EncodeToString(hash[:])})
+		c.JSON(http.StatusOK, gin.H{
+			"device_id": hex.EncodeToString(hash[:]),
+			"ppid":      hex.EncodeToString(report.PPID),
+		})
 	})
 }
