@@ -1,3 +1,11 @@
+## v0.1.10 (2026-06-02)
+
+- Merge pull request #2 from Phala-Network/feat/device-id-endpoint (295c25c)
+- docs: add DCAP profile and device_id endpoint to README (20ce151)
+- feat: also return raw ppid in /dcap/device_id response (020e234)
+- feat: add GET /dcap/device_id endpoint for verified device ID (b68a26c)
+- chore(release): update docker-compose.yml and CHANGELOG.md for v0.1.9 (7e96ffc)
+
 ## v0.1.9 (2026-06-02)
 
 - fix: add git to builder stage for go mod download fallback (5b0fe76)
