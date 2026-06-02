@@ -1,3 +1,7 @@
+## v0.1.9 (2026-06-02)
+
+- fix: add git to builder stage for go mod download fallback (5b0fe76)
+
 # Changelog
 
 ## v0.1.6 (2026-03-22)
