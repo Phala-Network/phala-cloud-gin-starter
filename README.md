@@ -23,6 +23,11 @@ Endpoints:
 - `GET /`
 - `GET /get_quote?text=hello`
 - `GET /tdx_quote?text=hello`
+
+Quote endpoints hash caller input as `sha512("app-data:" || utf8(text))` before
+it becomes TDX `report_data`, so the quote cannot be reused as an RA-TLS client
+certificate. The JSON includes `user_input`, `report_data_hex`, and
+`report_data_derivation` so a verifier can recompute the digest.
 - `GET /get_key?key=dstack`
 - `GET /env`
 - `GET /healthz`

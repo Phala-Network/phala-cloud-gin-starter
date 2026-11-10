@@ -188,7 +188,8 @@ func registerDcapRoutes(r *gin.Engine) {
 	// GET /dcap/device_id - Get device ID derived from verified TDX attestation
 	g.GET("/device_id", func(c *gin.Context) {
 		client := dstack.NewDstackClient()
-		resp, err := client.GetQuote(context.Background(), []byte("device_id"))
+		reportData := appDataReportData([]byte("device_id"))
+		resp, err := client.GetQuote(context.Background(), reportData)
 		if err != nil {
 			recordFailure("device_id", err)
 			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "failed to get quote: " + err.Error()})
