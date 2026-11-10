@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Cache Cargo build
         id: cache-dcap
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: dcap-qvl/target/x86_64-unknown-linux-musl
           key: dcap-lib-musl-${{ env.DCAP_QVL_COMMIT }}
@@ -40,7 +40,7 @@ jobs:
           cargo build --release --features go --target x86_64-unknown-linux-musl
 
       - name: Upload library artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: libdcap_qvl
           path: dcap-qvl/target/x86_64-unknown-linux-musl/release/libdcap_qvl.a
@@ -78,11 +78,11 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download dcap library
         if: matrix.profile.needs_dcap
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: libdcap_qvl
           path: lib
@@ -128,7 +128,7 @@ jobs:
 
       - name: Build and push Docker image (non-full profiles)
         if: matrix.profile.name != 'full'
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           platforms: linux/amd64
@@ -142,7 +142,7 @@ jobs:
 
       - name: Build and push Docker image (full profile)
         if: matrix.profile.name == 'full'
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           platforms: linux/amd64
