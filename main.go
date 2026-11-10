@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/sha512"
+	"encoding/hex"
 	"log"
 	"net/http"
 	"os"
@@ -12,6 +14,35 @@ import (
 	"github.com/Dstack-TEE/dstack/sdk/go/dstack"
 	"github.com/gin-gonic/gin"
 )
+
+const reportDataTag = "app-data"
+const reportDataDerivation = `sha512("app-data:" || utf8(user_input))`
+
+func appDataReportData(input []byte) []byte {
+	h := sha512.New()
+	h.Write([]byte(reportDataTag))
+	h.Write([]byte(":"))
+	h.Write(input)
+	return h.Sum(nil)
+}
+
+type quoteDemoResponse struct {
+	*dstack.GetQuoteResponse
+	UserInput            string `json:"user_input"`
+	ReportDataTag        string `json:"report_data_tag"`
+	ReportDataHex        string `json:"report_data_hex"`
+	ReportDataDerivation string `json:"report_data_derivation"`
+}
+
+func quoteDemo(input string, reportData []byte, resp *dstack.GetQuoteResponse) quoteDemoResponse {
+	return quoteDemoResponse{
+		GetQuoteResponse:     resp,
+		UserInput:            input,
+		ReportDataTag:        reportDataTag,
+		ReportDataHex:        hex.EncodeToString(reportData),
+		ReportDataDerivation: reportDataDerivation,
+	}
+}
 
 var (
 	failureThreshold    int32 = 10
@@ -46,28 +77,30 @@ func main() {
 
 	r.GET("/get_quote", func(c *gin.Context) {
 		text := c.DefaultQuery("text", "hello dstack")
+		reportData := appDataReportData([]byte(text))
 		client := dstack.NewDstackClient()
-		resp, err := client.GetQuote(context.Background(), []byte(text))
+		resp, err := client.GetQuote(context.Background(), reportData)
 		if err != nil {
 			recordFailure("get_quote", err)
 			c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
 			return
 		}
 		recordSuccess()
-		c.JSON(http.StatusOK, resp)
+		c.JSON(http.StatusOK, quoteDemo(text, reportData, resp))
 	})
 
 	r.GET("/tdx_quote", func(c *gin.Context) {
 		text := c.DefaultQuery("text", "hello dstack")
+		reportData := appDataReportData([]byte(text))
 		client := dstack.NewDstackClient()
-		resp, err := client.GetQuote(context.Background(), []byte(text))
+		resp, err := client.GetQuote(context.Background(), reportData)
 		if err != nil {
 			recordFailure("tdx_quote", err)
 			c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
 			return
 		}
 		recordSuccess()
-		c.JSON(http.StatusOK, resp)
+		c.JSON(http.StatusOK, quoteDemo(text, reportData, resp))
 	})
 
 	r.GET("/get_key", func(c *gin.Context) {
