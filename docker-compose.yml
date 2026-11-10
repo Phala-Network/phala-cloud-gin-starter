@@ -1,6 +1,6 @@
 services:
   gin:
-    image: ghcr.io/phala-network/phala-cloud-gin-starter:v0.1.10-full
+    image: ghcr.io/phala-network/phala-cloud-gin-starter:v0.2.0-full
     restart: unless-stopped
     ports:
       - "80:8080"
