@@ -13,9 +13,10 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  # PR #113 is merged. TODO: once a release is published with libdcap_qvl.a
-  # assets, replace the build-dcap-lib job with a simple download from GitHub Releases.
-  DCAP_QVL_COMMIT: "f1dcc65371e941a7b83e3234833d23a1fb232ab1"
+  # Keep in sync with github.com/Phala-Network/dcap-qvl/golang-bindings@v0.1.0
+  # (tag golang-bindings/v0.1.0). TODO: once a release is published with
+  # libdcap_qvl.a assets, replace the build-dcap-lib job with a download from GitHub Releases.
+  DCAP_QVL_COMMIT: "364f78c2715167680be7e4a9ec6a482b8577027f"
 
 jobs:
   # Build the dcap-qvl native library once, shared by dcap/full profiles.
@@ -87,11 +88,11 @@ jobs:
           path: lib
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Log in to the Container registry
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -100,7 +101,7 @@ jobs:
       - name: Extract metadata (non-full profiles)
         if: matrix.profile.name != 'full'
         id: meta_non_full
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -113,7 +114,7 @@ jobs:
       - name: Extract metadata (full profile + default aliases)
         if: matrix.profile.name == 'full'
         id: meta_full
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -127,7 +128,7 @@ jobs:
 
       - name: Build and push Docker image (non-full profiles)
         if: matrix.profile.name != 'full'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64
@@ -141,7 +142,7 @@ jobs:
 
       - name: Build and push Docker image (full profile)
         if: matrix.profile.name == 'full'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64
