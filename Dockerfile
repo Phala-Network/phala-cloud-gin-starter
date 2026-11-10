@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine AS builder
+FROM golang:1.26.10-alpine3.24 AS builder
 WORKDIR /app
 
 ARG GO_BUILD_TAGS=""
@@ -12,7 +12,7 @@ RUN go mod download
 COPY . .
 
 # When building with ethereum tag, add optional dependency explicitly.
-RUN if echo " $GO_BUILD_TAGS " | grep -q " ethereum "; then go get github.com/ethereum/go-ethereum@v1.16.8; fi
+RUN if echo " $GO_BUILD_TAGS " | grep -q " ethereum "; then go get github.com/ethereum/go-ethereum@v1.17.10; fi
 
 # Build: use CGO when dcap or ratls tag is present (expects libdcap_qvl.a in lib/), otherwise static build.
 RUN if echo " $GO_BUILD_TAGS " | grep -qE " (dcap|ratls) "; then \
@@ -22,7 +22,7 @@ RUN if echo " $GO_BUILD_TAGS " | grep -qE " (dcap|ratls) "; then \
       CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "$GO_BUILD_TAGS" -o server . ; \
     fi
 
-FROM alpine:3.21
+FROM alpine:3.24.4
 WORKDIR /app
 RUN apk add --no-cache libgcc
 RUN adduser -D -u 10001 appuser
