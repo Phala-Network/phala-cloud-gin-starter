@@ -42,7 +42,7 @@ Adds route:
 Run:
 
 ```bash
-go get github.com/ethereum/go-ethereum@v1.16.8
+go get github.com/ethereum/go-ethereum@v1.17.10
 go run -tags ethereum .
 ```
 
@@ -77,7 +77,7 @@ go run -tags dcap .
 ### 5) Both Ethereum + Solana
 
 ```bash
-go get github.com/ethereum/go-ethereum@v1.16.8
+go get github.com/ethereum/go-ethereum@v1.17.10
 go run -tags "ethereum solana" .
 ```
 
