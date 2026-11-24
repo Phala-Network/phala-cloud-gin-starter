@@ -45,6 +45,11 @@ func quoteDemo(input string, reportData []byte, resp *dstack.GetQuoteResponse) q
 }
 
 var (
+	v1Routes     = []string{"/v1/info", "/v1/version", "/v1/key", "/v1/attest", "/v1/tls_key"}
+	legacyRoutes = []string{"/info", "/get_quote", "/tdx_quote", "/get_key"}
+)
+
+var (
 	failureThreshold    int32 = 10
 	consecutiveFailures int32
 )
@@ -64,6 +69,14 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"v1":     gin.H{"guest_api": "dstack.guest.v1", "routes": v1Routes},
+			"legacy": gin.H{"guest_api": "dstack.guest.v0 (deprecated)", "routes": legacyRoutes},
+		})
+	})
+
+	// Legacy v0 routes. See README for why they stay.
+	r.GET("/info", func(c *gin.Context) {
 		client := dstack.NewDstackClientV0()
 		resp, err := client.Info(context.Background())
 		if err != nil {
@@ -116,6 +129,7 @@ func main() {
 		c.JSON(http.StatusOK, resp)
 	})
 
+	registerV1Routes(r)
 	registerEthereumRoutes(r)
 	registerSolanaRoutes(r)
 	registerDcapRoutes(r)

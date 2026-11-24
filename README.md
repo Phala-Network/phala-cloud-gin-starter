@@ -4,7 +4,32 @@
 
 A minimal [Gin](https://gin-gonic.com/) starter for Phala Cloud / dstack.
 
-This starter uses the frozen v0 guest API (`NewDstackClientV0`) from `github.com/Dstack-TEE/dstack/sdk/go/dstack` v0.6.1.
+This starter demonstrates the dstack guest API v1 (`NewDstackClient`) from `github.com/Dstack-TEE/dstack/sdk/go/dstack` v0.6.1.
+
+**Requirement:** the v1 routes need dstack OS >= 0.6.0. Phala Cloud CPU images `dstack-0.6.x` have it. GPU images are still 0.5.15 and only speak the legacy v0 API (see [Legacy v0 API](#legacy-v0-api)).
+
+## v1 routes
+
+- `GET /` lists the v1 and legacy routes
+- `GET /v1/info`
+- `GET /v1/version`
+- `GET /v1/key?domain=dstack&algorithm=secp256k1` (`algorithm` is `secp256k1` or `ed25519`; returns the public key and signature chain, not the private key)
+- `GET /v1/attest?text=hello` (report data is `sha512("app-data:" || utf8(text))`; v1 accepts 1-64 bytes)
+- `GET /v1/tls_key?subject=localhost` (issues a certificate; the private key is not returned)
+- `GET /v1/ethereum?domain=dstack` (ethereum profile)
+- `GET /v1/solana?domain=dstack` (solana profile; returns the hex public key)
+
+v1 has no `Sign`, `Verify`, `GetQuote` or `EmitEvent`; the attestation from `Attest` already carries the quote and event log.
+
+Do not hold assets in a wallet derived from `GetKey`: the key is a function of the KMS root, so these wallets suit demos and low-value or rotatable signing only. See the [dstack SDK warning](https://github.com/Dstack-TEE/dstack/blob/next/sdk/js/README.md#blockchain-helpers).
+
+## Legacy v0 API
+
+The routes below use the deprecated v0 API (`NewDstackClientV0`) and work on every dstack OS version, including the 0.5.15 GPU images:
+
+- `GET /info`, `GET /get_quote`, `GET /tdx_quote`, `GET /get_key`, `GET /ethereum`, `GET /solana`, and the DCAP / RA-TLS routes.
+
+**Warning:** v1 `GetKey` derives different key material from v0 for the same name (v1 takes `domain` and a required `algorithm`; v0 takes `path` and `purpose`). An app that already published an address derived with v0 must stay on v0, or its address changes.
 
 If you want to test a local SDK checkout, you can temporarily add:
 
@@ -18,9 +43,9 @@ replace github.com/Dstack-TEE/dstack/sdk/go/dstack => ../dstack/sdk/go/dstack
 
 No optional blockchain helper routes.
 
-Endpoints:
+Endpoints (legacy v0 routes; see above for v1):
 
-- `GET /`
+- `GET /info`
 - `GET /get_quote?text=hello`
 - `GET /tdx_quote?text=hello`
 
@@ -40,9 +65,10 @@ go run .
 
 ### 2) Ethereum profile (`-tags ethereum`)
 
-Adds route:
+Adds routes:
 
-- `GET /ethereum?key=dstack`
+- `GET /v1/ethereum?domain=dstack`
+- `GET /ethereum?key=dstack` (legacy v0)
 
 Run:
 
@@ -53,9 +79,10 @@ go run -tags ethereum .
 
 ### 3) Solana profile (`-tags solana`)
 
-Adds route:
+Adds routes:
 
-- `GET /solana?key=dstack`
+- `GET /v1/solana?domain=dstack`
+- `GET /solana?key=dstack` (legacy v0)
 
 Run:
 
