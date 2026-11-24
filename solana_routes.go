@@ -14,7 +14,7 @@ import (
 func registerSolanaRoutes(r *gin.Engine) {
 	r.GET("/solana", func(c *gin.Context) {
 		key := c.DefaultQuery("key", "dstack")
-		client := dstack.NewDstackClient()
+		client := dstack.NewDstackClientV0()
 		resp, err := client.GetKey(context.Background(), key, "", "ed25519")
 		if err != nil {
 			recordFailure("solana", err)

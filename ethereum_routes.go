@@ -14,7 +14,7 @@ import (
 func registerEthereumRoutes(r *gin.Engine) {
 	r.GET("/ethereum", func(c *gin.Context) {
 		key := c.DefaultQuery("key", "dstack")
-		client := dstack.NewDstackClient()
+		client := dstack.NewDstackClientV0()
 		resp, err := client.GetKey(context.Background(), key, "", "secp256k1")
 		if err != nil {
 			recordFailure("ethereum", err)

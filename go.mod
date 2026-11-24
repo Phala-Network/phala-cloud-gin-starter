@@ -3,8 +3,8 @@ module github.com/Phala-Network/phala-cloud-gin-starter
 go 1.25.0
 
 require (
-	github.com/Dstack-TEE/dstack/sdk/go v0.1.0
-	github.com/Dstack-TEE/dstack/sdk/go/ratls v0.1.0
+	github.com/Dstack-TEE/dstack/sdk/go/dstack v0.6.1
+	github.com/Dstack-TEE/dstack/sdk/go/ratls v0.6.1
 	github.com/Phala-Network/dcap-qvl/golang-bindings v0.1.0
 	github.com/gin-gonic/gin v1.12.0
 )
@@ -14,6 +14,7 @@ require (
 	github.com/bytedance/gopkg v0.1.3 // indirect
 	github.com/bytedance/sonic v1.15.0 // indirect
 	github.com/bytedance/sonic/loader v0.5.0 // indirect
+	github.com/cloudflare/circl v1.6.4 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
 	github.com/ethereum/go-ethereum v1.17.10 // indirect
@@ -36,6 +37,8 @@ require (
 	github.com/quic-go/quic-go v0.59.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.3.1 // indirect
+	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
+	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect
 	golang.org/x/arch v0.22.0 // indirect
 	golang.org/x/crypto v0.55.0 // indirect
