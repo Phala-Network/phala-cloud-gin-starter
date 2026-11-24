@@ -4,12 +4,12 @@
 
 A minimal [Gin](https://gin-gonic.com/) starter for Phala Cloud / dstack.
 
-This starter tracks the latest Go SDK from `github.com/Dstack-TEE/dstack/sdk/go`.
+This starter uses the frozen v0 guest API (`NewDstackClientV0`) from `github.com/Dstack-TEE/dstack/sdk/go/dstack` v0.6.1.
 
-If you want to test a local SDK branch, you can temporarily add:
+If you want to test a local SDK checkout, you can temporarily add:
 
 ```go
-replace github.com/Dstack-TEE/dstack/sdk/go => ../dstack/sdk/go
+replace github.com/Dstack-TEE/dstack/sdk/go/dstack => ../dstack/sdk/go/dstack
 ```
 
 ## Build profiles
@@ -89,18 +89,20 @@ go run -tags "ethereum solana" .
 ## Local development
 
 ```bash
-cd /Users/leechael/workshop/phala/phala-cloud-gin-starter
 go mod tidy
 go run .
 ```
 
 Default port is `:8080`.
 
-Use simulator sockets:
+Local development needs a running dstack guest-agent simulator (Linux). See [sdk/simulator](https://github.com/Dstack-TEE/dstack/tree/next/sdk/simulator).
+
+Point the SDK at it with `DSTACK_SIMULATOR_ENDPOINT` — a unix socket path, or an `http://` / `https://` URL (the v0 client accepts both):
 
 ```bash
-export DSTACK_SIMULATOR_ENDPOINT=/absolute/path/to/dstack.sock
-export TAPPD_SIMULATOR_ENDPOINT=/absolute/path/to/tappd.sock
+export DSTACK_SIMULATOR_ENDPOINT=/path/to/dstack.sock
+# or: export DSTACK_SIMULATOR_ENDPOINT=http://127.0.0.1:8090
+go run .
 ```
 
 ## Docker build

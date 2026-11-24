@@ -187,7 +187,7 @@ func registerDcapRoutes(r *gin.Engine) {
 
 	// GET /dcap/device_id - Get device ID derived from verified TDX attestation
 	g.GET("/device_id", func(c *gin.Context) {
-		client := dstack.NewDstackClient()
+		client := dstack.NewDstackClientV0()
 		reportData := appDataReportData([]byte("device_id"))
 		resp, err := client.GetQuote(context.Background(), reportData)
 		if err != nil {

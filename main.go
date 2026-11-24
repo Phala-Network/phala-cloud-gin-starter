@@ -64,7 +64,7 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/", func(c *gin.Context) {
-		client := dstack.NewDstackClient()
+		client := dstack.NewDstackClientV0()
 		resp, err := client.Info(context.Background())
 		if err != nil {
 			recordFailure("info", err)
@@ -78,7 +78,7 @@ func main() {
 	r.GET("/get_quote", func(c *gin.Context) {
 		text := c.DefaultQuery("text", "hello dstack")
 		reportData := appDataReportData([]byte(text))
-		client := dstack.NewDstackClient()
+		client := dstack.NewDstackClientV0()
 		resp, err := client.GetQuote(context.Background(), reportData)
 		if err != nil {
 			recordFailure("get_quote", err)
@@ -92,7 +92,7 @@ func main() {
 	r.GET("/tdx_quote", func(c *gin.Context) {
 		text := c.DefaultQuery("text", "hello dstack")
 		reportData := appDataReportData([]byte(text))
-		client := dstack.NewDstackClient()
+		client := dstack.NewDstackClientV0()
 		resp, err := client.GetQuote(context.Background(), reportData)
 		if err != nil {
 			recordFailure("tdx_quote", err)
@@ -105,7 +105,7 @@ func main() {
 
 	r.GET("/get_key", func(c *gin.Context) {
 		key := c.DefaultQuery("key", "dstack")
-		client := dstack.NewDstackClient()
+		client := dstack.NewDstackClientV0()
 		resp, err := client.GetKey(context.Background(), key, "", "secp256k1")
 		if err != nil {
 			recordFailure("get_key", err)
@@ -129,7 +129,7 @@ func main() {
 	r.GET("/healthz", func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()
-		client := dstack.NewDstackClient()
+		client := dstack.NewDstackClientV0()
 		_, err := client.Info(ctx)
 		if err != nil {
 			recordFailure("healthz", err)
