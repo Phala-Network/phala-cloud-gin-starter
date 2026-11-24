@@ -4,12 +4,12 @@
 
 A minimal [Gin](https://gin-gonic.com/) starter for Phala Cloud / dstack.
 
-This starter tracks the latest Go SDK from `github.com/Dstack-TEE/dstack/sdk/go`.
+This starter uses the frozen v0 guest API (`NewDstackClientV0`) from `github.com/Dstack-TEE/dstack/sdk/go/dstack` v0.6.1.
 
-If you want to test a local SDK branch, you can temporarily add:
+If you want to test a local SDK checkout, you can temporarily add:
 
 ```go
-replace github.com/Dstack-TEE/dstack/sdk/go => ../dstack/sdk/go
+replace github.com/Dstack-TEE/dstack/sdk/go/dstack => ../dstack/sdk/go/dstack
 ```
 
 ## Build profiles
@@ -89,18 +89,28 @@ go run -tags "ethereum solana" .
 ## Local development
 
 ```bash
-cd /Users/leechael/workshop/phala/phala-cloud-gin-starter
 go mod tidy
 go run .
 ```
 
 Default port is `:8080`.
 
-Use simulator sockets:
+There is no published `simulator-v*` GitHub release. Build the simulator from source at tag `js-sdk-v0.6.0` of [dstack](https://github.com/Dstack-TEE/dstack) (same guest agent as SDK 0.6.0). Its `dstack.sock` serves both v0 routes (`/GetKey`, `/Info`, …) and `/v1/…`.
+
+Prerequisites: Rust 1.92 and Cargo ([rustup](https://rustup.rs/)).
 
 ```bash
-export DSTACK_SIMULATOR_ENDPOINT=/absolute/path/to/dstack.sock
-export TAPPD_SIMULATOR_ENDPOINT=/absolute/path/to/tappd.sock
+git clone --depth 1 --branch js-sdk-v0.6.0 https://github.com/Dstack-TEE/dstack.git
+cd dstack/sdk/simulator
+./build.sh
+./dstack-simulator
+```
+
+In another terminal:
+
+```bash
+export DSTACK_SIMULATOR_ENDPOINT=/absolute/path/to/dstack/sdk/simulator/dstack.sock
+go run .
 ```
 
 ## Docker build
